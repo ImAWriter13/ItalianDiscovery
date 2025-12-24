@@ -20,10 +20,10 @@ import com.lagradost.cloudstream3.utils.AppUtils.toJson
 import com.lagradost.cloudstream3.utils.ExtractorLink
 import com.lagradost.cloudstream3.utils.newExtractorLink
 
-open class Discovery : MainAPI() {
+open class DiscoveryIt : MainAPI() {
     override var lang: String = "it"
     override val hasMainPage: Boolean = true
-    override var name: String = "Discovery"
+    override var name: String = "Discovery.It"
     override var mainUrl: String = "https://discovery.it"
     open var apiUrl: String = "https://public.aurora.enhanced.live"
     open var serviceIdentifier: String = "discoverychannelit"
