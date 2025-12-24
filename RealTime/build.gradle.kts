@@ -6,7 +6,7 @@ cloudstream {
     language = "it"
     // All of these properties are optional, you can safely remove them
 
-    description = "Discovery.it"
+    description = "Real Time"
     authors = listOf("AWake")
     //shoutout to Bnyro for the original plugin
 
@@ -23,5 +23,5 @@ cloudstream {
         "TvSeries",
     )
 
-    iconUrl = "https://www.google.com/s2/favicons?domain=https://discovery.it&sz=%size%"
+    iconUrl = "https://www.google.com/s2/favicons?domain=https://realtime.it&sz=%size%"
 }

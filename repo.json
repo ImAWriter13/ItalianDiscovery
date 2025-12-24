@@ -1,8 +1,8 @@
 {
-  "name": "German providers repository",
-  "description": "German providers",
+  "name": "Italian Discovery",
+  "description": "Italian Discovery",
   "manifestVersion": 1,
   "pluginLists": [
-    "https://raw.githubusercontent.com/bnyro/GermanProviders/builds/plugins.json"
+    "https://raw.githubusercontent.com/ImAWriter13/ItalianDiscovery/builds/plugins.json"
   ]
 }

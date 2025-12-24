@@ -42,7 +42,7 @@ subprojects {
     }
 
     android {
-        namespace = "com.bnyro"
+        namespace = "com.awe"
 
         defaultConfig {
             minSdk = 21
