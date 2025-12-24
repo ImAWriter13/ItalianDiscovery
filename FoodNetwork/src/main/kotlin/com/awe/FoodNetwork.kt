@@ -22,7 +22,7 @@ import com.lagradost.cloudstream3.utils.newExtractorLink
 
 open class FoodNetwork : MainAPI() {
     override var lang: String = "it"
-    override val hasMainPage: Boolean = false
+    override val hasMainPage: Boolean = true
     override var name: String = "Food Network"
     override var mainUrl: String = "https://foodnetwork.it"
     open var apiUrl: String = "https://public.aurora.enhanced.live"
@@ -248,7 +248,7 @@ open class FoodNetwork : MainAPI() {
         val seasonNumber: Long?,
         val type: String?,
         val title: String?,
-        val show: Show?,
+        //val show: Show?,
         val channel: Channel?,
         val poster: Poster?,
         val genres: List<String> = emptyList(),
@@ -262,12 +262,12 @@ open class FoodNetwork : MainAPI() {
     private data class Link(
         val url: String
     )
-
+/*
     private data class Show(
         val id: String,
         val title: String,
     )
-
+*/
     private data class Channel(
         val id: String,
         val title: String,
