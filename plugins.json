@@ -1,0 +1,191 @@
+[
+    {
+        "url": "https://raw.githubusercontent.com/ImAWriter13/ItalianDiscovery/builds/DiscoveryIt.cs3",
+        "status": 1,
+        "version": 2,
+        "name": "DiscoveryIt",
+        "internalName": "DiscoveryIt",
+        "authors": [
+            "AWake"
+        ],
+        "description": "Discovery.it",
+        "fileSize": 36785,
+        "repositoryUrl": "https://github.com/ImAWriter13/ItalianDiscovery",
+        "language": "it",
+        "tvTypes": [
+            "Movie",
+            "TvSeries"
+        ],
+        "iconUrl": "https://www.google.com/s2/favicons?domain=https://discovery.it&sz=%size%",
+        "apiVersion": 1,
+        "fileHash": "sha256-b311fbfa16b8482d82ea2f40755d66c8342925292e2f8b6f6417480776ac615f"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/ImAWriter13/ItalianDiscovery/builds/DiscoveryTurbo.cs3",
+        "status": 1,
+        "version": 2,
+        "name": "DiscoveryTurbo",
+        "internalName": "DiscoveryTurbo",
+        "authors": [
+            "AWake"
+        ],
+        "description": "Motor Trend direi",
+        "fileSize": 36958,
+        "repositoryUrl": "https://github.com/ImAWriter13/ItalianDiscovery",
+        "language": "it",
+        "tvTypes": [
+            "Movie",
+            "TvSeries"
+        ],
+        "iconUrl": "https://www.google.com/s2/favicons?domain=https://discoveryturbo.it&sz=%size%",
+        "apiVersion": 1,
+        "fileHash": "sha256-5b50c527b696d18cc4f9928c61731af89ac39c0a04f3e314ddc5bb6b253799bf"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/ImAWriter13/ItalianDiscovery/builds/Dmax.cs3",
+        "status": 1,
+        "version": 2,
+        "name": "Dmax",
+        "internalName": "Dmax",
+        "authors": [
+            "AWake"
+        ],
+        "description": "Dmax...",
+        "fileSize": 36893,
+        "repositoryUrl": "https://github.com/ImAWriter13/ItalianDiscovery",
+        "language": "it",
+        "tvTypes": [
+            "Movie",
+            "TvSeries"
+        ],
+        "iconUrl": "https://www.google.com/s2/favicons?domain=https://dmax.it&sz=%size%",
+        "apiVersion": 1,
+        "fileHash": "sha256-5b1b82dd18d67c6e8dd87450971cf7f50c995ae6850d672435af3f5e05e5d236"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/ImAWriter13/ItalianDiscovery/builds/FoodNetwork.cs3",
+        "status": 1,
+        "version": 2,
+        "name": "FoodNetwork",
+        "internalName": "FoodNetwork",
+        "authors": [
+            "AWake"
+        ],
+        "description": "Cibo",
+        "fileSize": 36497,
+        "repositoryUrl": "https://github.com/ImAWriter13/ItalianDiscovery",
+        "language": "it",
+        "tvTypes": [
+            "Movie",
+            "TvSeries"
+        ],
+        "iconUrl": "https://www.google.com/s2/favicons?domain=https://foodnetwork.it&sz=%size%",
+        "apiVersion": 1,
+        "fileHash": "sha256-2b3c712788072dde042b01a43150043cc11e35887f6caf90beec2e73203a4392"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/ImAWriter13/ItalianDiscovery/builds/Giallo.cs3",
+        "status": 1,
+        "version": 2,
+        "name": "Giallo",
+        "internalName": "Giallo",
+        "authors": [
+            "AWake"
+        ],
+        "description": "Vuoto ma non si sa mai",
+        "fileSize": 36896,
+        "repositoryUrl": "https://github.com/ImAWriter13/ItalianDiscovery",
+        "language": "it",
+        "tvTypes": [
+            "Movie",
+            "TvSeries"
+        ],
+        "iconUrl": "https://www.google.com/s2/favicons?domain=https://giallotv.it&sz=%size%",
+        "apiVersion": 1,
+        "fileHash": "sha256-489d52dfb755cb65a76ccd7c51c6848285125a1431641cc1501696e0e8f5fc76"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/ImAWriter13/ItalianDiscovery/builds/Hgtv.cs3",
+        "status": 1,
+        "version": 2,
+        "name": "Hgtv",
+        "internalName": "Hgtv",
+        "authors": [
+            "AWake"
+        ],
+        "description": "Non so neanche cosa sia",
+        "fileSize": 36888,
+        "repositoryUrl": "https://github.com/ImAWriter13/ItalianDiscovery",
+        "language": "it",
+        "tvTypes": [
+            "Movie",
+            "TvSeries"
+        ],
+        "iconUrl": "https://www.google.com/s2/favicons?domain=https://homegardentv.it&sz=%size%",
+        "apiVersion": 1,
+        "fileHash": "sha256-1adbd03daa4fe188020dc1378201c5b7fcf772ab9c5ba2d6bcbff8e17d8567c3"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/ImAWriter13/ItalianDiscovery/builds/MediasetInfinity.cs3",
+        "status": 1,
+        "version": 1,
+        "name": "MediasetInfinity",
+        "internalName": "MediasetInfinity",
+        "authors": [
+            "AWake"
+        ],
+        "description": "Mediaset",
+        "fileSize": 43238,
+        "repositoryUrl": "https://github.com/ImAWriter13/ItalianDiscovery",
+        "language": "it",
+        "tvTypes": [
+            "Movie",
+            "TvSeries"
+        ],
+        "iconUrl": "https://www.google.com/s2/favicons?domain=https://mediasetinfinity.mediaset.it&sz=%size%",
+        "apiVersion": 1,
+        "fileHash": "sha256-57295500c987e9ac9c2fbbf749e56d31175750a788d4abdf80a2996b2ce4e7af"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/ImAWriter13/ItalianDiscovery/builds/Nove.cs3",
+        "status": 1,
+        "version": 2,
+        "name": "Nove",
+        "internalName": "Nove",
+        "authors": [
+            "AWake"
+        ],
+        "description": "Vedrai solo Nove... no spe",
+        "fileSize": 36882,
+        "repositoryUrl": "https://github.com/ImAWriter13/ItalianDiscovery",
+        "language": "it",
+        "tvTypes": [
+            "Movie",
+            "TvSeries"
+        ],
+        "iconUrl": "https://www.google.com/s2/favicons?domain=https://nove.tv&sz=%size%",
+        "apiVersion": 1,
+        "fileHash": "sha256-a3cab2832172e7eed910570dd17f9be0a60bdda73b235d51b5d0e36f8ec2585d"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/ImAWriter13/ItalianDiscovery/builds/RealTime.cs3",
+        "status": 1,
+        "version": 2,
+        "name": "RealTime",
+        "internalName": "RealTime",
+        "authors": [
+            "AWake"
+        ],
+        "description": "Real Time",
+        "fileSize": 36926,
+        "repositoryUrl": "https://github.com/ImAWriter13/ItalianDiscovery",
+        "language": "it",
+        "tvTypes": [
+            "Movie",
+            "TvSeries"
+        ],
+        "iconUrl": "https://www.google.com/s2/favicons?domain=https://realtime.it&sz=%size%",
+        "apiVersion": 1,
+        "fileHash": "sha256-4d0a6055acbae2dcc86aae9df34e6c7e0f133d829948ab573fb2a13705b0b74d"
+    }
+]
