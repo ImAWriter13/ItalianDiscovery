@@ -13,6 +13,7 @@ on:
       - main
     paths-ignore:
       - '*.md'
+  workflow_dispatch: 
 
 jobs:
   build:
@@ -39,7 +40,9 @@ jobs:
           java-version: 17
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
+        uses: android-actions/setup-android@v4.0.1
+        with: 
+          packages: platform-tools platforms;android-36 build-tools;36.0.0
 
       - name: Build Plugins
         run: |
