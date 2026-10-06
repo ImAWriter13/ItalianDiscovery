@@ -120,7 +120,7 @@ open class Hgtv : MainAPI() {
                 this.posterUrl = response.metaMedia.getOrNull(1)?.media?.url?.let { convertToCloudFront(it) }
                 this.backgroundPosterUrl = response.metaMedia.firstOrNull()?.media?.url?.let { convertToCloudFront(it) }
                 this.year = response.datePublished.take(4).toIntOrNull()
-                this.plot = response.description ?: response.metaDescription
+                this.plot = response.description?.split("|")?.getOrNull(1) ?: response.metaDescription?.split("|")?.getOrNull(1)
                 //this.tags = response.taxonomies.map { it.title }
             }
         }
@@ -138,7 +138,7 @@ open class Hgtv : MainAPI() {
             this.posterUrl = response.metaMedia.getOrNull(1)?.media?.url?.let { convertToCloudFront(it) }
             this.backgroundPosterUrl = response.metaMedia.firstOrNull()?.media?.url?.let { convertToCloudFront(it) }
             this.year = response.datePublished.take(4).toIntOrNull()
-            this.plot = response.description ?: response.metaDescription
+            this.plot = response.description?.split("|")?.getOrNull(1) ?: response.metaDescription?.split("|")?.getOrNull(1)
             //this.tags = response.taxonomies.map { it.title }
             this.comingSoon = videoId == null
         }
