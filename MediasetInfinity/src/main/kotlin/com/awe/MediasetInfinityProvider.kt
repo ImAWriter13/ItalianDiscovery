@@ -59,7 +59,6 @@ class MediasetInfinity : MainAPI() {
             .mapNotNull { row ->
                 val sectionTitle = row.select("h2").text()
                 if (sectionTitle in excluded) return@mapNotNull null
-
                 val programs = row.select("ul.scroll li, .card-item, .item-video")
                     .dropLast(1)
                     .mapNotNull { el ->
