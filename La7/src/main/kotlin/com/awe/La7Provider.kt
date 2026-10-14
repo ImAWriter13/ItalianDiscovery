@@ -171,8 +171,15 @@ class LA7Provider : MainAPI() {
         callback: (ExtractorLink) -> Unit
     ): Boolean {
         val html = app.get(data).text
-        val params = html.substringAfter("var videoParams", html)
-        val mp4 = params.jsonField("mp4")?.cleanUrl() ?: return false
+        val src = html.substringAfter("var videoParams", html).substringBefore("chn:")
+
+        // il player elenca piu' file dello stesso video: l'ultimo e' quello con l'audio buono;
+        // se il video ha un solo file, e' quello
+        val mp4 = Regex("content/entry/data/(\\d+/\\d+)/(\\w+)").findAll(src)
+            .map { "https://awsvodpkg.iltrovatore.it/content/entry/data/${it.groupValues[1]}/${it.groupValues[2]}.mp4" }
+            .distinct().lastOrNull()
+            ?: src.jsonField("mp4")?.cleanUrl()
+            ?: return false
 
         callback(newExtractorLink(name, "$name MP4", mp4, ExtractorLinkType.VIDEO) {
             this.referer = mainUrl

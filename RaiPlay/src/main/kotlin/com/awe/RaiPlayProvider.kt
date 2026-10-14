@@ -41,6 +41,7 @@ class RaiPlay : MainAPI() {
     private val clipTextKeywords = listOf("sanremo")
     private val clipCategories = listOf("calcio")
 
+    private val reversedEpisodeTitles = listOf("reazione a catena")
     private fun JSONObject.categoryNames(): List<String> {
         val out = mutableListOf<String>()
         listOf("typology", "label").forEach { key ->
@@ -122,7 +123,7 @@ class RaiPlay : MainAPI() {
     }
     override suspend fun search(query: String): List<SearchResponse>? {
         val q = query.trim().replace(Regex("\\s+"), " ")
-        if (q.length < 2) return emptyList() //site won't search under 2 chars
+        if (q.length < 2) return emptyList()
 
         return try {
             val res = app.post(
@@ -186,7 +187,7 @@ class RaiPlay : MainAPI() {
             }
             seasonNames = groups.mapIndexed { gi, g -> SeasonData(gi + 1, g.name) }
         } else {
-            episodes = root.episodeSets()
+            val loaded = root.episodeSets()
                 .map { s ->
                     async {
                         try {
@@ -198,6 +199,16 @@ class RaiPlay : MainAPI() {
                 }
                 .awaitAll()
                 .flatten()
+
+            val reverseOrder = reversedEpisodeTitles.any {
+                title.contains(it, ignoreCase = true) ||
+                        base.contains(it.replace(" ", ""), ignoreCase = true)
+            }
+            episodes = if (reverseOrder) {
+                loaded.groupBy { it.season }.values.flatMap { it.reversed() }
+            } else {
+                loaded
+            }
         }
 
         if (episodes.isEmpty()) return@coroutineScope null
@@ -260,7 +271,6 @@ class RaiPlay : MainAPI() {
         val parts = optString("duration").split(":").mapNotNull { it.toIntOrNull() }
         val minutes = if (parts.size == 3) parts[0] * 60 + parts[1] else null
 
-        // path_id for subtitles
         val data = JSONObject()
             .put("v", videoUrl)
             .put("j", optString("path_id"))
