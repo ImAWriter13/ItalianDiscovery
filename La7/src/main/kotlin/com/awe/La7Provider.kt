@@ -13,6 +13,63 @@ class LA7Provider : MainAPI() {
     override var lang = "it"
     override val hasMainPage = true
     override val supportedTypes = setOf(TvType.TvSeries, TvType.Movie)
+    private val nameOverrides = mapOf(
+        "100minuti" to "100 Minuti",
+        "bellitalia-in-viaggio" to "Bell'italia in viaggio",
+        "atlantidefiles" to "Atlantide Files",
+        "bellidentrobellifuori" to "Bellli dentro belli fuori",
+        "charlie-s-angels" to "Charlie's Angels",
+        "figworldcup" to "Coppa del mondo di ritmica",
+        "crozza" to "Crozza nel Paese delle Meraviglie",
+        "dimartedi" to "DiMartedì",
+        "e-quella-giusta" to "È quella giusta",
+        "speciali-ezio-mauro" to "Ezio Mauro",
+        "facciaafaccia" to "Faccia a Faccia",
+        "famiglie-ditalia" to "Famiglie d'Italia",
+        "webserie" to "Food Maniac",
+        "honestlygood" to "Honestly Good",
+        "house-of-trump-la-serie" to "House of Trump",
+        "i-menù-di-benedetta" to "I Menù di Benedetta",
+        "ilpolliceverdesonoio" to "Il Pollice Verde Sono Io",
+        "l-assaggiastorie" to "L'assaggiastorie",
+        "laria-che-tira" to "L'aria che tira",
+        "lariadestate" to "L'aria d'estate",
+        "lera-delle-macchine" to "L'era delle Macchine",
+        "lerba-del-vicino" to "L'erba del Vicino",
+        "lingrediente-perfetto" to "L'ingrediente perfetto",
+        "litaliapiubellachece" to "L'Italia più Bella che c'è",
+        "lora-della-salute" to "L'Ora della Salute",
+        "lunionefalaforza" to "L'unione fa la forza",
+        "lafelicitanoneunatruffa" to "La Felicità non è una Truffa",
+        "la7cult" to "La7 Cult",
+        "la7magazine" to "La7 Magazine",
+        "la7ricorda" to "La7 Ricorda",
+        "la7risponde" to "La7 Original Risponde",
+        "la7it-original" to "La7 Original",
+        "la725anni-un-racconto-italiano" to "La7 25 anni - Un racconto Italiano",
+        "la7-cinema-tutti-i-film" to "La7 Cinema",
+        "la7racconta" to "La7 Racconta",
+        "la7speciali" to "La7 Speciali",
+        "la7venti" to "La7 Venti",
+        "mercanti-dellanima" to "Mercanti dell'anima",
+        "meteola7" to "Meteo La7",
+        "donpasta" to "Natale con Donpasta",
+        "nonelarena" to "Non È L'Arena",
+        "oliver-stone-nuclear-now" to "Nuclear Now",
+        "pinkisgood" to "Pink is Good",
+        "trash-it" to "Post It & Trash It",
+        "prova-dinchiesta" to "Prova d'inchiesta",
+        "raffaella-carra" to "Raffaella Carrà",
+        "startupeconomy" to "Startup Economy",
+        "storie-dellaltro-social" to "Storie dell'altro social",
+        "tacco12enonsolo" to "Tacco 12... e non solo!",
+        "tagada" to "Tagadà",
+        "taste-il-gusto-delleccellenza" to "Taste - Il gusto dell'eccellenza",
+        "tgla7" to "Tg La7",
+        "the-show-must-go-off" to "The Show Must Go Off"
+    )
+    private val hiddenSlugs = setOf("le-copertine-di-crozza", "eccezionale-veramente-ma-veramente", "welovecinema", "euro-dieci", "i-responsabili", "il-mondo-che-verra", "josephineangegardien", "lofficina-delle-erbe", "little-murders", "quattrodonneeunfunerale", "recital-di-corrado-guzzanti", "si-parla-di")
+    private val notReversedSlugs = setOf("m-il-figlio-del-secolo", "hawthorne", "house-of-trump-la-serie")
 
     private var homeCache: List<HomePageList>? = null
 
@@ -83,8 +140,12 @@ class LA7Provider : MainAPI() {
                 ?.takeIf { it.hasClass("container-programmi-list") }
                 ?: return@mapNotNull null
 
-            val items = list.select("div.list-item a[href]").map { a ->
-                newTvSeriesSearchResponse(titleOf(a), fixUrl(a.attr("href")), TvType.TvSeries) {
+            val items = list.select("div.list-item a[href]")
+                .filterNot { it.attr("href").trimEnd('/').substringAfterLast('/') in hiddenSlugs }
+                .map { a ->
+                val href = fixUrl(a.attr("href"))
+                val title = nameOverrides[href.trimEnd('/').substringAfterLast('/')] ?: titleOf(a)
+                newTvSeriesSearchResponse(title, href, TvType.TvSeries) {
                     this.posterUrl = a.selectFirst("div.image-bg")?.bgImage()
                 }
             }.distinctBy { it.url }
@@ -125,14 +186,14 @@ class LA7Provider : MainAPI() {
             return if (html.contains("videoParams")) videoLoad(url, html, ogTitle, plot, ogImage) else null
         }
 
-        val episodes = eps.values.map { ep ->
+        val episodes = (if (slug in notReversedSlugs) eps.values.toList() else eps.values.reversed()).map { ep ->
             newEpisode(ep.href) {
                 this.name = listOfNotNull(ep.date, ep.name).joinToString(" - ")
                     .ifBlank { slugTitle(ep.href) }
                 this.posterUrl = ep.poster
             }
         }
-        return newTvSeriesLoadResponse(ogTitle ?: doc.title(), url, TvType.TvSeries, episodes) {
+        return newTvSeriesLoadResponse(nameOverrides[slug] ?: ogTitle ?: doc.title(), url, TvType.TvSeries, episodes) {
             this.posterUrl = ogImage
             this.plot = plot
         }
