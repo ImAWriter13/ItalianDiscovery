@@ -71,6 +71,7 @@ class LA7Provider : MainAPI() {
     private val hiddenSlugs = setOf("le-copertine-di-crozza", "eccezionale-veramente-ma-veramente", "welovecinema", "euro-dieci", "i-responsabili", "il-mondo-che-verra", "josephineangegardien", "lofficina-delle-erbe", "little-murders", "quattrodonneeunfunerale", "recital-di-corrado-guzzanti", "si-parla-di")
     private val notReversedSlugs = setOf("m-il-figlio-del-secolo", "hawthorne", "house-of-trump-la-serie")
 
+    private val dateRegex = Regex("\\d{1,2}[/.]\\d{1,2}[/.]\\d{2,4}")
     private var homeCache: List<HomePageList>? = null
 
     private suspend fun loadHome(): List<HomePageList> {
@@ -135,7 +136,6 @@ class LA7Provider : MainAPI() {
     private suspend fun getProgrammiPerLettera(): List<HomePageList> {
         val doc = app.get("$mainUrl/tutti-i-programmi").document
         return doc.select("div.container-programmi h3").mapNotNull { h3 ->
-            // la lista e' il fratello successivo dell'h3, non un suo figlio
             val list = h3.nextElementSibling()
                 ?.takeIf { it.hasClass("container-programmi-list") }
                 ?: return@mapNotNull null
@@ -174,12 +174,29 @@ class LA7Provider : MainAPI() {
 
         val slug = url.trimEnd('/').substringAfterLast('/')
         val eps = LinkedHashMap<String, Ep>()
-        collectEpisodes(doc, slug, eps)
-        try {
-            collectEpisodes(app.get("$mainUrl/$slug/rivedila7").document, slug, eps)
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
+        collectEpisodes(doc, "a[href*=\"/$slug/rivedila7/\"]", eps)
+        var next = 0
+        var more = true
+        while (more && next < 200) {
+            val pages = (next until next + 5).toList().amap { p ->
+                val pageUrl = if (p == 0) "$mainUrl/$slug/rivedila7" else "$mainUrl/$slug/rivedila7?page=$p"
+                try {
+                    app.get(pageUrl).document
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    null
+                }
+            }
+            for (pageDoc in pages) {
+                val before = eps.size
+                if (pageDoc != null) collectEpisodes(pageDoc, "div.common-item a[href*=\"/rivedila7/\"]", eps)
+                if (eps.size == before) {
+                    more = false
+                    break
+                }
+            }
+            next += 5
         }
 
         if (eps.isEmpty()) {
@@ -188,8 +205,12 @@ class LA7Provider : MainAPI() {
 
         val episodes = (if (slug in notReversedSlugs) eps.values.toList() else eps.values.reversed()).map { ep ->
             newEpisode(ep.href) {
-                this.name = listOfNotNull(ep.date, ep.name).joinToString(" - ")
-                    .ifBlank { slugTitle(ep.href) }
+                val n = ep.name
+                this.name = when {
+                    n == null -> ep.date ?: slugTitle(ep.href)
+                    ep.date == null || dateRegex.containsMatchIn(n) -> n
+                    else -> "${ep.date} - $n"
+                }
                 this.posterUrl = ep.poster
             }
         }
@@ -211,11 +232,11 @@ class LA7Provider : MainAPI() {
         }
     }
 
-    private fun collectEpisodes(doc: Document, slug: String, out: MutableMap<String, Ep>) {
-        doc.select("a[href*=\"/$slug/rivedila7/\"]").forEach { a ->
+    private fun collectEpisodes(doc: Document, selector: String, out: MutableMap<String, Ep>) {
+        doc.select(selector).forEach { a ->
             val ep = out.getOrPut(fixUrl(a.attr("href"))) { Ep(fixUrl(a.attr("href")), null, null, null) }
             if (ep.name == null) {
-                ep.name = (a.selectFirst(".title_puntata") ?: a.selectFirst(".occhiello"))
+                ep.name = (a.selectFirst(".title_puntata") ?: a.selectFirst(".occhiello") ?: a.selectFirst(".title"))
                     ?.text()?.trim()?.takeIf { it.isNotBlank() }
             }
             if (ep.poster == null) ep.poster = a.selectFirst("[data-background-image]")?.bgImage()
@@ -233,9 +254,6 @@ class LA7Provider : MainAPI() {
     ): Boolean {
         val html = app.get(data).text
         val src = html.substringAfter("var videoParams", html).substringBefore("chn:")
-
-        // il player elenca piu' file dello stesso video: l'ultimo e' quello con l'audio buono;
-        // se il video ha un solo file, e' quello
         val mp4 = Regex("content/entry/data/(\\d+/\\d+)/(\\w+)").findAll(src)
             .map { "https://awsvodpkg.iltrovatore.it/content/entry/data/${it.groupValues[1]}/${it.groupValues[2]}.mp4" }
             .distinct().lastOrNull()
@@ -277,7 +295,6 @@ class LA7Provider : MainAPI() {
         return slugTitle(a.attr("href"))
     }
 
-    // lozad scrive lo style via JS: nell'HTML scaricato c'e' solo data-background-image
     private fun Element.bgImage(): String? =
         attr("data-background-image").trim().takeIf { it.isNotBlank() }?.let {
             if (it.startsWith("//")) "https:$it" else fixUrl(it)
