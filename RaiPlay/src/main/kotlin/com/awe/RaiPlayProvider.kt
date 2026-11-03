@@ -28,6 +28,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.json.JSONObject
 import org.jsoup.nodes.Element
+import java.text.Normalizer
 
 class RaiPlay : MainAPI() {
     override var mainUrl = "https://www.raiplay.it"
@@ -41,7 +42,12 @@ class RaiPlay : MainAPI() {
     private val clipTextKeywords = listOf("sanremo")
     private val clipCategories = listOf("calcio")
 
-    private val reversedEpisodeTitles = listOf("reazione a catena")
+    private fun String.norm(): String =
+        Normalizer.normalize(this, Normalizer.Form.NFD)
+            .replace(Regex("[^\\p{L}\\p{N}]"), "")
+            .lowercase()
+
+    private val reversedEpisodeTitles = listOf("reazione a catena", "l'eredità").map { it.norm() }
     private fun JSONObject.categoryNames(): List<String> {
         val out = mutableListOf<String>()
         listOf("typology", "label").forEach { key ->
@@ -200,10 +206,9 @@ class RaiPlay : MainAPI() {
                 .awaitAll()
                 .flatten()
 
-            val reverseOrder = reversedEpisodeTitles.any {
-                title.contains(it, ignoreCase = true) ||
-                        base.contains(it.replace(" ", ""), ignoreCase = true)
-            }
+            val t = title.norm()
+            val b = base.norm()
+            val reverseOrder = reversedEpisodeTitles.any { t.contains(it) || b.contains(it) }
             episodes = if (reverseOrder) {
                 loaded.groupBy { it.season }.values.flatMap { it.reversed() }
             } else {
