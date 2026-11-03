@@ -42,12 +42,44 @@ class RaiPlay : MainAPI() {
     private val clipTextKeywords = listOf("sanremo")
     private val clipCategories = listOf("calcio")
 
-    private fun String.norm(): String =
-        Normalizer.normalize(this, Normalizer.Form.NFD)
-            .replace(Regex("[^\\p{L}\\p{N}]"), "")
-            .lowercase()
+    private val months = listOf("gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre")
+    private val textDate = Regex(
+        """(\d{1,2})\s+(${months.joinToString("|")})(?:\s+(\d{4}))?""",
+        RegexOption.IGNORE_CASE
+    )
+    private val numDate = Regex("""(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{4}|\d{2})""")
+    private fun String.toDateKey(): Pair<Int, Int>? {
+        textDate.find(this)?.let { m ->
+            val d = m.groupValues[1].toInt()
+            val mo = months.indexOf(m.groupValues[2].lowercase()) + 1
+            if (d in 1..31 && mo in 1..12) {
+                return (m.groupValues[3].toIntOrNull() ?: 0) to (mo * 100 + d)
+            }
+        }
+        numDate.find(this)?.let { m ->
+            val d = m.groupValues[1].toInt()
+            val mo = m.groupValues[2].toInt()
+            var y = m.groupValues[3].toInt()
+            if (y < 100) y += 2000
+            if (d in 1..31 && mo in 1..12) return y to (mo * 100 + d)
+        }
+        return null
+    }
 
-    private val reversedEpisodeTitles = listOf("reazione a catena", "l'eredità").map { it.norm() }
+    private fun compareDates(a: Pair<Int, Int>, b: Pair<Int, Int>): Int =
+        if (a.first != 0 && b.first != 0 && a.first != b.first) a.first.compareTo(b.first)
+        else a.second.compareTo(b.second)
+
+    private fun shouldReverse(eps: List<Episode>): Boolean {
+        val keys = eps.mapNotNull { it.name?.toDateKey() }
+        var desc = 0
+        var asc = 0
+        keys.zipWithNext { a, b ->
+            val c = compareDates(a, b)
+            if (c > 0) desc++ else if (c < 0) asc++
+        }
+        return desc > asc
+    }
     private fun JSONObject.categoryNames(): List<String> {
         val out = mutableListOf<String>()
         listOf("typology", "label").forEach { key ->
@@ -208,11 +240,8 @@ class RaiPlay : MainAPI() {
 
             val t = title.norm()
             val b = base.norm()
-            val reverseOrder = reversedEpisodeTitles.any { t.contains(it) || b.contains(it) }
-            episodes = if (reverseOrder) {
-                loaded.groupBy { it.season }.values.flatMap { it.reversed() }
-            } else {
-                loaded
+            episodes = loaded.groupBy { it.season }.values.flatMap {
+                if (shouldReverse(it)) it.reversed() else it
             }
         }
 
