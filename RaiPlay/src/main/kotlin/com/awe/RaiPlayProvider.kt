@@ -28,7 +28,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import org.json.JSONObject
 import org.jsoup.nodes.Element
-import java.text.Normalizer
 
 class RaiPlay : MainAPI() {
     override var mainUrl = "https://www.raiplay.it"
@@ -42,12 +41,17 @@ class RaiPlay : MainAPI() {
     private val clipTextKeywords = listOf("sanremo")
     private val clipCategories = listOf("calcio")
 
-    private val months = listOf("gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre")
+    private val months = listOf(
+        "gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno",
+        "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"
+    )
     private val textDate = Regex(
         """(\d{1,2})\s+(${months.joinToString("|")})(?:\s+(\d{4}))?""",
         RegexOption.IGNORE_CASE
     )
     private val numDate = Regex("""(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{4}|\d{2})""")
+
+    // (anno o 0 se assente, mese*100 + giorno)
     private fun String.toDateKey(): Pair<Int, Int>? {
         textDate.find(this)?.let { m ->
             val d = m.groupValues[1].toInt()
@@ -80,6 +84,7 @@ class RaiPlay : MainAPI() {
         }
         return desc > asc
     }
+
     private fun JSONObject.categoryNames(): List<String> {
         val out = mutableListOf<String>()
         listOf("typology", "label").forEach { key ->
@@ -116,6 +121,7 @@ class RaiPlay : MainAPI() {
 
             newHomePageResponse(rows, hasNext = false)
         }
+
     private fun parseInlineSection(section: Element): HomePageList? {
         val name = section.selectFirst("h2.card-list__title")?.text()?.trim().orEmpty()
         if (name.isBlank()) return null
@@ -159,6 +165,7 @@ class RaiPlay : MainAPI() {
                 .firstImage("portrait43", "portrait", "square", "landscape43", "landscape")
         }
     }
+
     override suspend fun search(query: String): List<SearchResponse>? {
         val q = query.trim().replace(Regex("\\s+"), " ")
         if (q.length < 2) return emptyList()
@@ -238,8 +245,6 @@ class RaiPlay : MainAPI() {
                 .awaitAll()
                 .flatten()
 
-            val t = title.norm()
-            val b = base.norm()
             episodes = loaded.groupBy { it.season }.values.flatMap {
                 if (shouldReverse(it)) it.reversed() else it
             }
@@ -264,6 +269,7 @@ class RaiPlay : MainAPI() {
             addActors(actors)
         }
     }
+
     private fun JSONObject.episodeSets(): List<EpisodeSet> {
         val blocks = optJSONArray("blocks") ?: return emptyList()
         val skip = listOf("extra", "highlight", "riassunt")
